@@ -20,6 +20,7 @@ interface StoreState extends AppState {
   // AI Operations
   generateDesign: (imageUri: string, style: string) => Promise<void>;
   uploadImage: () => Promise<string | null>;
+  takePhoto: () => Promise<string | null>;
   
   // User Management
   createGuestUser: () => Promise<void>;
@@ -118,13 +119,9 @@ export const useStore = create<StoreState>()(
         set({ isLoading: true, error: null });
 
         try {
-          // Convert image URI to File object
-          const response = await fetch(imageUri);
-          const blob = await response.blob();
-          const file = new File([blob], 'room.jpg', { type: 'image/jpeg' });
-
-          // Generate design
-          const result = await currentApi.generateImage({ image: file, style });
+          // For React Native, we'll pass the image URI directly
+          // The API should handle the image processing
+          const result = await currentApi.generateImage({ image: imageUri, style });
           
           // Get style info
           const styleInfo = await currentApi.getStyleInfo({ style });
@@ -167,12 +164,12 @@ export const useStore = create<StoreState>()(
           }
 
           // Launch image picker
-              const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: [ImagePicker.MediaType.Image],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.8,
-    });
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.8,
+          });
 
           if (!result.canceled && result.assets[0]) {
             return result.assets[0].uri;
@@ -182,6 +179,35 @@ export const useStore = create<StoreState>()(
         } catch (error) {
           console.error('Error uploading image:', error);
           set({ error: 'Failed to upload image' });
+          return null;
+        }
+      },
+
+      takePhoto: async (): Promise<string | null> => {
+        try {
+          // Request camera permissions
+          const { status } = await ImagePicker.requestCameraPermissionsAsync();
+          if (status !== 'granted') {
+            set({ error: 'Permission to access camera is required!' });
+            return null;
+          }
+
+          // Launch camera
+          const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.8,
+          });
+
+          if (!result.canceled && result.assets[0]) {
+            return result.assets[0].uri;
+          }
+
+          return null;
+        } catch (error) {
+          console.error('Error taking photo:', error);
+          set({ error: 'Failed to take photo' });
           return null;
         }
       },

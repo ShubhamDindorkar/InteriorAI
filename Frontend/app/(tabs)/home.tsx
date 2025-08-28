@@ -22,6 +22,7 @@ export default function HomeScreen() {
     isLoading,
     error,
     uploadImage,
+    takePhoto,
     generateDesign,
     clearError,
   } = useStore();
@@ -37,6 +38,13 @@ export default function HomeScreen() {
 
   const handleImageSelect = async () => {
     const imageUri = await uploadImage();
+    if (imageUri) {
+      setSelectedImage(imageUri);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    const imageUri = await takePhoto();
     if (imageUri) {
       setSelectedImage(imageUri);
     }
@@ -96,6 +104,7 @@ export default function HomeScreen() {
           imageUri={selectedImage}
           onImageSelect={handleImageSelect}
           onImageRemove={handleImageRemove}
+          onTakePhoto={handleTakePhoto}
         />
 
         {/* Style Picker */}

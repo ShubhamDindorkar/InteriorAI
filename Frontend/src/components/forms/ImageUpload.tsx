@@ -19,12 +19,14 @@ interface ImageUploadProps {
   imageUri: string | null;
   onImageSelect: () => void;
   onImageRemove: () => void;
+  onTakePhoto: () => void;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   imageUri,
   onImageSelect,
   onImageRemove,
+  onTakePhoto,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -39,7 +41,16 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         ]
       );
     } else {
-      onImageSelect();
+      // Show options for taking photo or selecting from gallery
+      Alert.alert(
+        'Add Room Photo',
+        'Choose how you want to add a photo',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Take Photo', onPress: onTakePhoto },
+          { text: 'Choose from Gallery', onPress: onImageSelect },
+        ]
+      );
     }
   };
 
@@ -69,7 +80,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         />
         <Text style={styles.uploadTitle}>Upload Room Photo</Text>
         <Text style={styles.uploadSubtitle}>
-          Tap to select a photo from your gallery
+          Tap to take a photo or choose from gallery
         </Text>
         <View style={styles.uploadInfo}>
           <Text style={styles.uploadInfoText}>

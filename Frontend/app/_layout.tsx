@@ -1,15 +1,31 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useStore } from '../src/hooks/useStore';
 import { colors } from '../src/lib/theme';
+import { LoadingScreen } from '../src/components/ui/LoadingScreen';
 
 export default function RootLayout() {
   const { initializeApp } = useStore();
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
-    initializeApp();
+    async function loadAppResources() {
+      try {
+        await initializeApp();
+        setFontsLoaded(true);
+      } catch (error) {
+        console.error('Error loading app resources:', error);
+        setFontsLoaded(true); // Continue anyway
+      }
+    }
+    
+    loadAppResources();
   }, [initializeApp]);
+
+  if (!fontsLoaded) {
+    return <LoadingScreen message="Loading fonts..." />;
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -20,7 +36,7 @@ export default function RootLayout() {
           },
           headerTintColor: colors.light.text.heading,
           headerTitleStyle: {
-            fontFamily: 'Poppins_700Bold',
+            fontFamily: 'Georgia',
           },
           contentStyle: {
             backgroundColor: colors.light.background,

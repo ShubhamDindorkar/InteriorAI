@@ -38,7 +38,7 @@ export interface ApiResponse<T> {
 }
 
 export interface GenerateImageRequest {
-  image: File;
+  image: string; // Image URI for React Native
   style: string;
 }
 

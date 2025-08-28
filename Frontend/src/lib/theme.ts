@@ -71,9 +71,9 @@ export const colors = {
 
 export const typography = {
   fonts: {
-    heading: 'Poppins_700Bold',
-    body: 'Inter_400Regular',
-    bodyMedium: 'Inter_500Medium',
+    heading: 'Georgia', // Similar to Playfair Display
+    body: 'Times New Roman', // Similar to Cormorant Garamond
+    bodyMedium: 'Times New Roman',
   },
   sizes: {
     h1: 32,

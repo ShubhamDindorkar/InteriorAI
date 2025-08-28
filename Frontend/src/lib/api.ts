@@ -13,16 +13,16 @@ class ApiError extends Error {
 export const api = {
   async generateImage(request: GenerateImageRequest): Promise<GenerateImageResponse> {
     try {
-      const formData = new FormData();
-      formData.append('image', request.image);
-      formData.append('style', request.style);
-
+      // For React Native, we'll send the image URI and style as JSON
       const response = await fetch(`${API_BASE_URL}/generate-image`, {
         method: 'POST',
-        body: formData,
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          imageUri: request.image,
+          style: request.style,
+        }),
       });
 
       if (!response.ok) {
